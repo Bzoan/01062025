@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nút quà với 1000 dòng chữ hiện ngẫu nhiên</title>
+  <style>
+    body {
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+    #btnQuà {
+      position: absolute;
+      padding: 12px 25px;
+      font-size: 18px;
+      font-weight: 600;
+      background: #ff6f61;
+      border: none;
+      border-radius: 25px;
+      box-shadow: 0 8px 15px rgba(255, 111, 97, 0.4);
+      color: white;
+      cursor: pointer;
+      user-select: none;
+      opacity: 0;
+      transition: opacity 0.4s ease, background-color 0.3s ease, transform 0.3s ease;
+      z-index: 10;
+    }
+    #btnQuà:hover:not(:disabled) {
+      background: #ff3b2f;
+      transform: scale(1.05);
+      box-shadow: 0 12px 20px rgba(255, 59, 47, 0.6);
+    }
+    #progressContainer {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      height: 30px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      display: none;
+      user-select: none;
+      z-index: 20;
+      font-weight: 700;
+      color: white;
+      line-height: 30px;
+      text-align: center;
+      font-family: monospace;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+    }
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff6f61, #ff3b2f);
+      border-radius: 15px 0 0 15px;
+      transition: width 0.2s ease;
+      position: relative;
+    }
+    #progressText {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
+      line-height: 30px;
+      text-align: center;
+      pointer-events: none;
+      user-select: none;
+    }
+    #message {
+      margin-top: 10px;
+      font-size: 20px;
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+      min-height: 28px;
+      font-weight: 600;
+      font-style: italic;
+      user-select: none;
+    }
+    #cocainjtContainer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 1000;
+    }
+    .cocainjtLine {
+      position: absolute;
+      color: #fff;
+      font-weight: bold;
+      font-family: monospace;
+      font-size: 14px;
+      user-select: none;
+      text-shadow: 1px 1px 2px #000;
+      white-space: nowrap;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="btnQuà">Click vào đây sẽ có quà 🎁</button>
+  <div id="progressContainer">
+    <div id="progressBar">
+      <div id="progressText">0%</div>
+    </div>
+  </div>
+  <div id="message"></div>
+  <div id="cocainjtContainer"></div>
+
+  <!-- Thêm thẻ audio -->
+  <audio id="audio" src="audio.mp3" preload="auto"></audio>
+  <audio id="audio2" src="video2.mp3" preload="auto"></audio> <!-- 🔊 file bạn thêm -->
+
+  <script>
+    const btn = document.getElementById('btnQuà');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const message = document.getElementById('message');
+    const cocainjtContainer = document.getElementById('cocainjtContainer');
+    const audio = document.getElementById('audio');
+    const audio2 = document.getElementById('audio2');
+
+    let count = 0;
+    const maxCount = 5;
+    const intervalTime = 1000;
+
+    function randomPosition() {
+      const padding = 50;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const x = Math.random() * (vw - btn.offsetWidth - padding * 2) + padding;
+      const y = Math.random() * (vh - btn.offsetHeight - padding * 2) + padding;
+      return { x, y };
+    }
+
+    function showButtonRandom() {
+      if (count < maxCount) {
+        const pos = randomPosition();
+        btn.style.left = pos.x + 'px';
+        btn.style.top = pos.y + 'px';
+        btn.style.opacity = '1';
+
+        setTimeout(() => {
+          btn.style.opacity = '0';
+          count++;
+          setTimeout(showButtonRandom, intervalTime / 2);
+        }, 700);
+      } else {
+        const pos = randomPosition();
+        btn.style.left = pos.x + 'px';
+        btn.style.top = pos.y + 'px';
+        btn.style.opacity = '1';
+      }
+    }
+
+    btn.style.opacity = '0';
+    setTimeout(showButtonRandom, 1000);
+
+    function showNotification() {
+      if ("Notification" in window) {
+        if (Notification.permission === "granted") {
+          new Notification("Lỗi", {
+            body: "Không thể có quà 😞",
+            icon: "https://cdn-icons-png.flaticon.com/512/1828/1828665.png",
+          });
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+              new Notification("Lỗi", {
+                body: "Không thể có quà 😞",
+                icon: "https://cdn-icons-png.flaticon.com/512/1828/1828665.png",
+              });
+            } else {
+              alert("Lỗi - Không thể có quà 😞");
+            }
+          });
+        } else {
+          alert("Lỗi - Không thể có quà 😞");
+        }
+      } else {
+        alert("Lỗi - Không thể có quà 😞");
+      }
+    }
+
+    const totalDuration = 29000;
+    const messageShowTime = 15000;
+
+    btn.addEventListener('click', () => {
+      btn.style.display = 'none';
+      progressContainer.style.display = 'block';
+      progressBar.style.width = '0%';
+      progressText.textContent = '0%';
+      message.textContent = '';
+
+      audio.currentTime = 0;
+      audio.play();
+
+      let progress = 0;
+      const stepTime = 100;
+      const steps = totalDuration / stepTime;
+      const increment = 99 / steps;
+
+      let elapsedTime = 0;
+      const progressInterval = setInterval(() => {
+        progress += increment;
+        elapsedTime += stepTime;
+        
+        if (progress >= 99) {
+          progress = 99;
+          clearInterval(progressInterval);
+          progressBar.style.width = '100%';
+          progressText.textContent = '100%';
+
+          audio.pause();
+          audio.currentTime = 0;
+
+          setTimeout(() => {
+            progressContainer.style.display = 'none';
+            message.textContent = '';
+            showNotification();
+
+            cocainjtContainer.innerHTML = '';
+            for (let i = 0; i < 1000; i++) {
+              const div = document.createElement('div');
+              div.className = 'cocainjtLine';
+              div.textContent = 'cocainjt';
+
+              const vw = window.innerWidth;
+              const vh = window.innerHeight;
+              const x = Math.random() * (vw - 60);
+              const y = Math.random() * (vh - 20);
+
+              div.style.left = x + 'px';
+              div.style.top = y + 'px';
+
+              cocainjtContainer.appendChild(div);
+            }
+
+            // ✅ Phát audio2.mp3 sau khi hiện cocainjt
+            audio2.currentTime = 0;
+            audio2.play();
+
+            btn.remove();
+          }, 800);
+        } else {
+          progressBar.style.width = progress.toFixed(1) + '%';
+          progressText.textContent = Math.floor(progress) + '%';
+        }
+      }, stepTime);
+    });
+
+    window.addEventListener('resize', () => {
+      if (btn.style.opacity === '1') {
+        const pos = randomPosition();
+        btn.style.left = pos.x + 'px';
+        btn.style.top = pos.y + 'px';
+      }
+    });
+  </script>
+
+</body>
+</html>
